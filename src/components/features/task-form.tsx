@@ -25,11 +25,11 @@ export function TaskForm({ task, onSuccess, onCancel }: TaskFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) {
-      toast("Title is required", "error");
+      toast("กรุณากรอกชื่องาน", "error");
       return;
     }
     if (!dueDate) {
-      toast("Due date is required", "error");
+      toast("กรุณาเลือกวันครบกำหนด", "error");
       return;
     }
     setIsLoading(true);
@@ -48,7 +48,7 @@ export function TaskForm({ task, onSuccess, onCancel }: TaskFormProps) {
       const data = await res.json();
 
       if (data.status === "success") {
-        toast(isEdit ? "Task updated" : "Task created", "success");
+        toast(isEdit ? "อัปเดตงานแล้ว" : "สร้างงานแล้ว", "success");
         onSuccess();
         if (!isEdit) {
           setTitle("");
@@ -56,38 +56,38 @@ export function TaskForm({ task, onSuccess, onCancel }: TaskFormProps) {
           setDueDate("");
         }
       } else {
-        toast(data.message ?? "Failed", "error");
+        toast(data.message ?? "เกิดข้อผิดพลาด", "error");
       }
     } catch {
-      toast("Network error", "error");
+      toast("เกิดข้อผิดพลาด กรุณาลองใหม่", "error");
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="task-title">Title</Label>
+        <Label htmlFor="task-title">ชื่องาน</Label>
         <Input
           id="task-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Task title"
+          placeholder="เช่น ส่งรายงานประจำสัปดาห์"
           required
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="task-desc">Description (optional)</Label>
+        <Label htmlFor="task-desc">รายละเอียด (ไม่บังคับ)</Label>
         <Input
           id="task-desc"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description"
+          placeholder="อธิบายเพิ่มเติมถ้าต้องการ"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="task-due">Due date</Label>
+        <Label htmlFor="task-due">วันครบกำหนด</Label>
         <Input
           id="task-due"
           type="date"
@@ -96,13 +96,13 @@ export function TaskForm({ task, onSuccess, onCancel }: TaskFormProps) {
           required
         />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-1">
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Saving..." : isEdit ? "Update" : "Create"}
+          {isLoading ? "กำลังบันทึก..." : isEdit ? "อัปเดต" : "สร้างงาน"}
         </Button>
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            ยกเลิก
           </Button>
         )}
       </div>

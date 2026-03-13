@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
+/* โทนจากภาพ: ฟ้าอ่อน ครีม ทราย ดินแดงอมม่วง (สบายตา) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-page: #eeede9;
+  --bg-card: #f8f6f2;
+  --text-primary: #5c524d;
+  --text-muted: #977b77;
+  --accent: #8ba8b8;
+  --accent-hover: #7a96a6;
+  --accent-soft: #e0ebf0;
+  --border: #ddd0c4;
+  --overdue-bg: #f5e8e8;
+  --overdue-border: #d4a5a5;
+  --overdue-text: #8b5a5a;
+  --due-today-bg: #f5efe5;
+  --due-today-border: #ddb697;
+  --due-today-text: #8b6f4a;
+  --shadow-sm: 0 1px 2px rgba(92, 82, 77, 0.06);
+  --shadow-md: 0 4px 12px rgba(92, 82, 77, 0.08);
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+}
+
+/* โหมดมืด — ใช้เมื่อมี class "dark" บน <html> (จากปุ่ม toggle) */
+.dark {
+  --bg-page: #2a2826;
+  --bg-card: #353230;
+  --text-primary: #e8e2dc;
+  --text-muted: #b8a8a4;
+  --accent: #9fb8c8;
+  --accent-hover: #b8ccd8;
+  --accent-soft: #3d4a52;
+  --border: #4a4540;
+  --overdue-bg: #4a3535;
+  --overdue-border: #6b4a4a;
+  --overdue-text: #e8c8c8;
+  --due-today-bg: #4a4235;
+  --due-today-border: #6b5a4a;
+  --due-today-text: #e8d8c8;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--bg-page);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-playpen-sans-thai), system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-playpen-sans-thai), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }

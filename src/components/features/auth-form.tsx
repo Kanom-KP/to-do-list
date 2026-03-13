@@ -57,14 +57,16 @@ export function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>{isLogin ? "Sign in" : "Create account"}</CardTitle>
+    <Card className="w-full border-2">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl">
+          {isLogin ? "เข้าสู่ระบบ" : "สมัครสมาชิก"}
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <CardContent className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">อีเมล</Label>
             <Input
               id="email"
               type="email"
@@ -76,11 +78,11 @@ export function AuthForm({ mode }: AuthFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">รหัสผ่าน</Label>
             <Input
               id="password"
               type="password"
-              placeholder={isLogin ? "••••••••" : "At least 8 chars, letters and numbers"}
+              placeholder={isLogin ? "••••••••" : "อย่างน้อย 8 ตัว อักษรและตัวเลข"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -88,23 +90,29 @@ export function AuthForm({ mode }: AuthFormProps) {
               autoComplete={isLogin ? "current-password" : "new-password"}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Please wait..." : isLogin ? "Sign in" : "Register"}
+          <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+            {isLoading ? "กรุณารอสักครู่..." : isLogin ? "เข้าสู่ระบบ" : "สมัครสมาชิก"}
           </Button>
         </form>
-        <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-center text-sm text-[var(--text-muted)]">
           {isLogin ? (
             <>
-              No account?{" "}
-              <a href="/register" className="font-medium text-foreground underline underline-offset-4">
-                Register
+              ยังไม่มีบัญชี?{" "}
+              <a
+                href="/register"
+                className="font-medium text-[var(--accent)] underline underline-offset-4 hover:no-underline"
+              >
+                สมัครสมาชิก
               </a>
             </>
           ) : (
             <>
-              Already have an account?{" "}
-              <a href="/login" className="font-medium text-foreground underline underline-offset-4">
-                Sign in
+              มีบัญชีอยู่แล้ว?{" "}
+              <a
+                href="/login"
+                className="font-medium text-[var(--accent)] underline underline-offset-4 hover:no-underline"
+              >
+                เข้าสู่ระบบ
               </a>
             </>
           )}

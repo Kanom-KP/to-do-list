@@ -38,10 +38,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <div
             key={m.id}
             className={cn(
-              "rounded-lg border px-4 py-3 shadow-lg",
-              m.variant === "error" && "border-red-200 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200",
-              m.variant === "success" && "border-green-200 bg-green-50 text-green-800 dark:border-green-900 dark:bg-green-950 dark:text-green-200",
-              (!m.variant || m.variant === "default") && "border-zinc-200 bg-white text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+              "rounded-xl border-2 px-4 py-3 text-sm font-medium shadow-lg",
+              m.variant === "error" &&
+                "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950/80 dark:text-red-200",
+              m.variant === "success" &&
+                "border-teal-200 bg-teal-50 text-teal-800 dark:border-teal-800 dark:bg-teal-950/80 dark:text-teal-200",
+              (!m.variant || m.variant === "default") &&
+                "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)]"
             )}
           >
             {m.message}

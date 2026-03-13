@@ -36,15 +36,15 @@ export function TaskItem({ task, onUpdate }: TaskItemProps) {
   }
 
   async function handleDelete() {
-    if (!confirm("Delete this task?")) return;
+    if (!confirm("ลบงานนี้?")) return;
     try {
       const res = await fetch(`/api/tasks/${task.id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.status === "success") {
-        toast("Task deleted", "success");
+        toast("ลบงานแล้ว", "success");
         onUpdate();
       } else {
-        toast(data.message ?? "Delete failed", "error");
+        toast(data.message ?? "ลบล้มเหลว", "error");
       }
     } catch {
       toast("Network error", "error");
@@ -57,12 +57,15 @@ export function TaskItem({ task, onUpdate }: TaskItemProps) {
   return (
     <Card
       className={cn(
-        "transition-colors",
-        highlightOverdue && "border-red-400 bg-red-50 dark:border-red-800 dark:bg-red-950/40",
-        highlightDueToday && !highlightOverdue && "border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/40"
+        "border-2 transition-all duration-200",
+        highlightOverdue &&
+          "border-[var(--overdue-border)] bg-[var(--overdue-bg)]",
+        highlightDueToday &&
+          !highlightOverdue &&
+          "border-[var(--due-today-border)] bg-[var(--due-today-bg)]"
       )}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-4 sm:p-5">
         {isEditing ? (
           <TaskForm
             task={task}
@@ -73,40 +76,54 @@ export function TaskItem({ task, onUpdate }: TaskItemProps) {
             onCancel={() => setIsEditing(false)}
           />
         ) : (
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
                 <input
                   type="checkbox"
                   checked={task.is_completed}
                   onChange={handleToggleComplete}
-                  className="h-4 w-4 rounded border-zinc-300"
+                  className="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-[var(--border)] bg-[var(--bg-card)] text-[var(--accent)] transition-colors focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
+                  aria-label={task.is_completed ? "ยกเลิกทำเสร็จ" : "ทำเสร็จ"}
                 />
-                <span className={cn("font-medium", task.is_completed && "text-zinc-500 line-through")}>
+                <span
+                  className={cn(
+                    "font-medium text-[var(--text-primary)]",
+                    task.is_completed && "text-[var(--text-muted)] line-through"
+                  )}
+                >
                   {task.title}
                 </span>
                 {highlightOverdue && (
-                  <span className="rounded bg-red-200 px-1.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200">
-                    Overdue
+                  <span className="rounded-lg bg-[var(--overdue-bg)] px-2 py-0.5 text-xs font-medium text-[var(--overdue-text)] ring-1 ring-[var(--overdue-border)]">
+                    เลยกำหนด
                   </span>
                 )}
                 {highlightDueToday && !highlightOverdue && (
-                  <span className="rounded bg-amber-200 px-1.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-200">
-                    Due Today
+                  <span className="rounded-lg bg-[var(--due-today-bg)] px-2 py-0.5 text-xs font-medium text-[var(--due-today-text)] ring-1 ring-[var(--due-today-border)]">
+                    ครบกำหนดวันนี้
                   </span>
                 )}
               </div>
               {task.description && (
-                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{task.description}</p>
+                <p className="pl-7 text-sm text-[var(--text-muted)]">
+                  {task.description}
+                </p>
               )}
-              <p className="mt-1 text-xs text-zinc-500">Due: {task.due_date}</p>
+              <p className="pl-7 text-xs text-[var(--text-muted)]">
+                ครบกำหนด: {task.due_date}
+              </p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
-                Edit
+            <div className="flex gap-2 pl-7 sm:pl-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
+                แก้ไข
               </Button>
               <Button variant="destructive" size="sm" onClick={handleDelete}>
-                Delete
+                ลบ
               </Button>
             </div>
           </div>
