@@ -1,0 +1,44 @@
+rules:
+  naming_conventions:
+    file_naming: "kebab-case for files (e.g., task-card.tsx), PascalCase for React components"
+    variable_naming: "camelCase for variables and functions"
+    database_models: "PascalCase for Prisma models, snake_case for database columns if required, but default to camelCase for Prisma fields"
+    boolean_variables: "Prefix with 'is', 'has', or 'should' (e.g., is_completed, is_overdue)"
+
+  error_handling_and_logging:
+    api_responses: "Follow the defined contract: { status: 'success' | 'error', message: string, data?: any }"
+    auth_errors: "Explicitly handle 'Duplicate Email' and 'Email Not Found' with 400 and 404 status codes respectively"
+    validation: "Use Zod for schema validation on both Client and Server side"
+    logging: "Use console.error for server-side API errors; show user-friendly messages via shadcn/ui Toast for client-side"
+
+  component_structure_and_imports:
+    directory_structure:
+      - "app/api/*: Next.js Route Handlers"
+      - "components/ui/*: shadcn/ui base components"
+      - "components/features/*: Feature-specific components (e.g., TaskItem, AuthForm)"
+      - "lib/*: Shared utilities, Prisma client, and date-fns helpers"
+    import_order: "React/Next.js first, then internal shadcn/ui, then local features/hooks, then styles/types"
+    path_aliases: "Always use '@/' absolute paths (e.g., '@/components/...' )"
+
+  testing_requirements:
+    unit_testing: "Ensure date-fns logic for 'is_overdue' and 'is_due_today' is unit tested with multiple timezones"
+    integration: "Test the Task sorting logic: Overdue > Due Today > Soon > Distant"
+    coverage: "Prioritize testing for Auth Middleware and Task Access Control (RBAC)"
+
+  security_and_best_practices:
+    authentication:
+      - "Never store plain text passwords; use bcrypt or argon2 for hashing"
+      - "Implement Middleware to protect /dashboard and redirect unauthenticated users to /login"
+    authorization:
+      - "CRITICAL: Every database query for Tasks must include a 'where: { userId: currentUserId }' clause"
+      - "Validate that the user modifying a task is the actual owner of that task"
+    typescript_strict:
+      - "No 'any' allowed; use interfaces or types for Task and User entities"
+      - "Define Computed States (is_overdue, is_due_today) as derived properties in the frontend or API DTOs"
+    ui_ux_logic:
+      - "Priority Sorting: Overdue (Red) -> Due Today (Yellow) -> Pending -> Completed"
+      - "Responsive Design: Ensure Tailwind 'sm', 'md', 'lg' breakpoints are used for task list readability"
+
+  computed_state_logic:
+    overdue_definition: "is_completed == false && current_date > due_date"
+    due_today_definition: "is_completed == false && current_date == due_date"
