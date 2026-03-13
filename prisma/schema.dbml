@@ -1,0 +1,31 @@
+// DBML converted from Prisma schema
+// https://dbml.dbdiagram.io/
+
+Table user {
+  id string [pk, note: 'cuid']
+  email string [unique, not null]
+  password_hash string [not null]
+  created_at datetime [not null, default: `now()`]
+  updated_at datetime [not null]
+
+  Note: 'User account'
+}
+
+Table task {
+  id string [pk, note: 'cuid']
+  user_id string [not null]
+  title string [not null]
+  description string
+  due_date datetime [not null]
+  is_completed boolean [not null, default: false]
+  created_at datetime [not null, default: `now()`]
+  updated_at datetime [not null]
+
+  indexes {
+    user_id
+  }
+
+  Note: 'Task belongs to user, delete cascade'
+}
+
+Ref: task.user_id > user.id [delete: cascade]

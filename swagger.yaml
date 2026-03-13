@@ -1,0 +1,395 @@
+openapi: 3.0.3
+info:
+  title: To-do List API
+  description: API ทั้งหมดในระบบ To-do List รวมถึงการลงทะเบียน ล็อกอิน ออกจากระบบ และจัดการงาน (tasks)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Development
+
+paths:
+  /api/register:
+    post:
+      summary: ลงทะเบียนผู้ใช้ใหม่
+      description: สร้างบัญชีด้วยอีเมลและรหัสผ่าน (รหัสผ่านอย่างน้อย 8 ตัว อักษรผสมตัวเลข)
+      operationId: register
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: ลงทะเบียนสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: ข้อมูลไม่ถูกต้อง หรืออีเมลนี้ลงทะเบียนแล้ว
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /api/login:
+    post:
+      summary: ล็อกอิน
+      description: เข้าสู่ระบบด้วยอีเมลและรหัสผ่าน เมื่อสำเร็จจะได้ session cookie สำหรับเรียก API อื่น
+      operationId: login
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: ล็อกอินสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: ข้อมูลไม่ถูกต้อง หรือรหัสผ่านผิด
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: ไม่พบอีเมลนี้ (ยังไม่ได้ลงทะเบียน)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorWithRedirect"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /api/logout:
+    post:
+      summary: ออกจากระบบ
+      description: ล้าง session cookie ออกจากระบบ
+      operationId: logout
+      tags:
+        - auth
+      responses:
+        "200":
+          description: ออกจากระบบสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+
+  /api/tasks:
+    get:
+      summary: ดึงรายการงานทั้งหมด
+      description: คืนรายการงานของ user ที่ล็อกอิน เรียงรอดำเนินการก่อน แล้วตามด้วยงานที่เสร็จแล้ว (จัดเรียงตาม updatedAt)
+      operationId: getTasks
+      tags:
+        - tasks
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: รายการงาน (array ของ Task)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+        "401":
+          description: ไม่ได้ล็อกอิน
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+    post:
+      summary: สร้างงานใหม่
+      description: สร้างงานใหม่ภายใต้ user ที่ล็อกอิน
+      operationId: createTask
+      tags:
+        - tasks
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskRequest"
+      responses:
+        "200":
+          description: สร้างสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: ข้อมูลไม่ถูกต้อง (เช่น title ว่าง, due_date ไม่ใช่ date)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: ไม่ได้ล็อกอิน
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /api/tasks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: รหัสงาน (UUID)
+        schema:
+          type: string
+          format: uuid
+    put:
+      summary: อัปเดตงาน
+      description: แก้ไขงานที่ตัวเองเป็นเจ้าของ (ส่งเฉพาะ field ที่ต้องการเปลี่ยน)
+      operationId: updateTask
+      tags:
+        - tasks
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskRequest"
+      responses:
+        "200":
+          description: อัปเดตสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: ข้อมูลไม่ถูกต้อง
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: ไม่ได้ล็อกอิน
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: ไม่พบงานหรือไม่มีสิทธิ์
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+    delete:
+      summary: ลบงาน
+      description: ลบงานที่ตัวเองเป็นเจ้าของ
+      operationId: deleteTask
+      tags:
+        - tasks
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: ลบสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "401":
+          description: ไม่ได้ล็อกอิน
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: ไม่พบงานหรือไม่มีสิทธิ์
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
+      description: Session cookie หลังล็อกอิน (POST /api/login)
+
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - title
+        - due_date
+        - is_completed
+        - is_overdue
+        - is_due_today
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: รหัสงาน
+        title:
+          type: string
+          description: ชื่องาน
+        description:
+          type: string
+          nullable: true
+          description: รายละเอียด (ถ้ามี)
+        due_date:
+          type: string
+          format: date
+          example: "2026-03-13"
+          description: วันที่ครบกำหนด (YYYY-MM-DD)
+        is_completed:
+          type: boolean
+          description: ทำเสร็จแล้วหรือยัง
+        is_overdue:
+          type: boolean
+          description: เลยกำหนดและยังไม่เสร็จ
+        is_due_today:
+          type: boolean
+          description: ครบกำหนดวันนี้หรือไม่
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - title
+        - due_date
+      properties:
+        title:
+          type: string
+          minLength: 1
+          description: ชื่องาน (บังคับ)
+        description:
+          type: string
+          description: รายละเอียด (ไม่บังคับ)
+        due_date:
+          type: string
+          description: วันที่ครบกำหนด (YYYY-MM-DD หรือ ISO date string)
+
+    UpdateTaskRequest:
+      type: object
+      description: ส่งเฉพาะ field ที่ต้องการอัปเดต
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        due_date:
+          type: string
+          description: วันที่ครบกำหนด (YYYY-MM-DD หรือ ISO date string)
+        is_completed:
+          type: boolean
+          description: สถานะทำเสร็จแล้ว
+
+    SuccessMessage:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        message:
+          type: string
+
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string
+
+    ApiErrorWithRedirect:
+      type: object
+      description: ใช้กับ login เมื่ออีเมลยังไม่ลงทะเบียน
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string
+        redirect_to:
+          type: string
+          example: "/register"
+          description:  path ให้ redirect ไปลงทะเบียน
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: อีเมล
+        password:
+          type: string
+          minLength: 8
+          description: รหัสผ่านอย่างน้อย 8 ตัว ต้องมีทั้งตัวอักษรและตัวเลข
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+          description: รหัสผ่าน

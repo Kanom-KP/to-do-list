@@ -16,6 +16,7 @@ interface TaskItemProps {
 export function TaskItem({ task, onUpdate }: TaskItemProps) {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   async function handleToggleComplete() {
     try {
@@ -36,12 +37,12 @@ export function TaskItem({ task, onUpdate }: TaskItemProps) {
   }
 
   async function handleDelete() {
-    if (!confirm("ลบงานนี้?")) return;
     try {
       const res = await fetch(`/api/tasks/${task.id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.status === "success") {
         toast("ลบงานแล้ว", "success");
+        setShowDeleteConfirm(false);
         onUpdate();
       } else {
         toast(data.message ?? "ลบล้มเหลว", "error");
@@ -65,7 +66,7 @@ export function TaskItem({ task, onUpdate }: TaskItemProps) {
           "border-[var(--due-today-border)] bg-[var(--due-today-bg)]"
       )}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="pt-5 px-4 pb-4 sm:p-5">
         {isEditing ? (
           <TaskForm
             task={task}
@@ -140,17 +141,45 @@ export function TaskItem({ task, onUpdate }: TaskItemProps) {
                 ครบกำหนด: {task.due_date}
               </p>
             </div>
-            <div className="flex gap-2 pl-7 sm:pl-0">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-              >
-                แก้ไข
-              </Button>
-              <Button variant="destructive" size="sm" onClick={handleDelete}>
-                ลบ
-              </Button>
+            <div className="flex flex-wrap items-center gap-2 pl-7 sm:pl-0">
+              {showDeleteConfirm ? (
+                <>
+                  <span className="text-sm text-[var(--text-muted)]">
+                    แน่ใจหรือไม่?
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    ยกเลิก
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleDelete}
+                  >
+                    ยืนยันลบ
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    แก้ไข
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setShowDeleteConfirm(true)}
+                  >
+                    ลบ
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}

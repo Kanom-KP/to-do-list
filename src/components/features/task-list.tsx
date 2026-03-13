@@ -41,7 +41,7 @@ export function TaskList() {
   const pendingCount = pending.length;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8 sm:space-y-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">งานของฉัน</h1>
@@ -148,7 +148,7 @@ export function TaskList() {
           <p className="text-[var(--text-muted)]">กำลังโหลด...</p>
         </div>
       ) : (
-        <>
+        <div className="space-y-8 sm:space-y-10">
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               รอดำเนินการ
@@ -186,7 +186,7 @@ export function TaskList() {
               </ul>
             )}
           </section>
-        </>
+        </div>
       )}
     </div>
   );
