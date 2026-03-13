@@ -79,13 +79,39 @@ export function TaskItem({ task, onUpdate }: TaskItemProps) {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1 space-y-1">
               <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={task.is_completed}
-                  onChange={handleToggleComplete}
-                  className="mt-0.5 h-5 w-5 shrink-0 rounded-md border-2 border-[var(--border)] bg-[var(--bg-card)] text-[var(--accent)] transition-colors focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
-                  aria-label={task.is_completed ? "ยกเลิกทำเสร็จ" : "ทำเสร็จ"}
-                />
+                <label className="group relative mt-0.5 flex h-6 w-6 shrink-0 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={task.is_completed}
+                    onChange={handleToggleComplete}
+                    className="peer sr-only"
+                    aria-label={task.is_completed ? "ยกเลิกทำเสร็จ" : "ทำเสร็จ"}
+                  />
+                  <span
+                    className={cn(
+                      "flex h-6 w-6 items-center justify-center rounded-xl border-2 transition-all duration-200",
+                      "border-[var(--checkbox-border)] bg-[var(--bg-card)]",
+                      "peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--checkbox-checked)] peer-focus-visible:ring-offset-2",
+                      "group-hover:border-[var(--checkbox-checked)]",
+                      task.is_completed &&
+                        "border-[var(--checkbox-checked)] bg-[var(--checkbox-checked)] text-white"
+                    )}
+                  >
+                    {task.is_completed && (
+                      <svg
+                        className="h-3.5 w-3.5 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </span>
+                </label>
                 <span
                   className={cn(
                     "font-medium text-[var(--text-primary)]",

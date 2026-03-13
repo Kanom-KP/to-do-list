@@ -30,6 +30,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${playpenSansThai.variable} ${playpenSansThai.className} antialiased`}
+        suppressHydrationWarning
       >
         <ThemeProvider>
         <ToastProvider>{children}</ToastProvider>

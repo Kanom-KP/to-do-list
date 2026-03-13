@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
-/* โทนจากภาพ: ฟ้าอ่อน ครีม ทราย ดินแดงอมม่วง (สบายตา) */
+/* โทนจากภาพ: ฟ้าอ่อน ครีม ทราย ดินแดงอมม่วง (สบายตา) — ปรับความคมชัดให้อ่านง่าย */
 :root {
-  --bg-page: #eeede9;
-  --bg-card: #f8f6f2;
-  --text-primary: #5c524d;
-  --text-muted: #977b77;
-  --accent: #8ba8b8;
-  --accent-hover: #7a96a6;
-  --accent-soft: #e0ebf0;
-  --border: #ddd0c4;
+  --bg-page: #ebe8e4;
+  --bg-card: #f5f2ed;
+  --text-primary: #4a423d;
+  --text-muted: #7d6b66;
+  --accent: #6e94a6;
+  --accent-hover: #5d8294;
+  --accent-soft: #d4e4ec;
+  --border: #c9bfb2;
+  --checkbox-border: #a89888;
+  --checkbox-checked: #6e94a6;
   --overdue-bg: #f5e8e8;
   --overdue-border: #d4a5a5;
   --overdue-text: #8b5a5a;
@@ -28,10 +30,12 @@
   --bg-card: #353230;
   --text-primary: #e8e2dc;
   --text-muted: #b8a8a4;
-  --accent: #9fb8c8;
-  --accent-hover: #b8ccd8;
+  --accent: #7ba3b8;
+  --accent-hover: #9ab8c9;
   --accent-soft: #3d4a52;
   --border: #4a4540;
+  --checkbox-border: #6b6560;
+  --checkbox-checked: #7ba3b8;
   --overdue-bg: #4a3535;
   --overdue-border: #6b4a4a;
   --overdue-text: #e8c8c8;
